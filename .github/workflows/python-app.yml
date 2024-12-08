@@ -15,13 +15,15 @@ permissions:
   contents: read
  
 jobs:
-  build:
+    build:
  
-    runs-on: ubuntu-latest
+    matrix:
+      os: [ubuntu-latest, windows-latest]
     concurrency:
       group: Build
     defaults:
       run:
+        shell: bash
         working-directory: ./example-app
     steps:
     - uses: actions/checkout@v4
