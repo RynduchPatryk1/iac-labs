@@ -125,9 +125,7 @@ jobs:
   Test:
  
     runs-on: ubuntu-latest
-    needs: lint
-    needs: formatter
-    needs: sectest
+    needs: lint, formatter, sectest
     defaults:
       run:
         working-directory: ./example-app
