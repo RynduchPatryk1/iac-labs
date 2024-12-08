@@ -100,8 +100,8 @@ jobs:
   sectest:
  
     runs-on: ubuntu-latest
-    defaults:
     needs: build
+    defaults:
       run:
         working-directory: ./example-app
     steps:
