@@ -1,17 +1,22 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+ 
+          
+ 
 name: Python application
-
+ 
 on:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-
+ 
 permissions:
   contents: read
-
+ 
 jobs:
-  # Build job
   build:
+ 
     runs-on: ubuntu-latest
     concurrency:
       group: Build
@@ -40,8 +45,9 @@ jobs:
         path: /home/runner/work/iac-labs/iac-labs/example-app/.venv
         key: ${{ runner.os }}-venv
 
-  # Lint job
+ 
   lint:
+ 
     runs-on: ubuntu-latest
     needs: build
     defaults:
@@ -53,21 +59,25 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: "3.11"
+    - name: Install Poetry
+      uses: snok/install-poetry@v1.3.4
     - name: Recover cached deps
       id: cached-poetry-dependencies
       uses: actions/cache@v3
       with:
         path: /home/runner/work/iac-labs/iac-labs/example-app/.venv
         key: ${{ runner.os }}-venv
+
+ 
     - name: Lint
       run: |
         poetry run task lint
-
-  # Formatter job
+ 
   formatter:
+ 
     runs-on: ubuntu-latest
-    needs: build
     defaults:
+    needs: build
       run:
         working-directory: ./example-app
     steps:
@@ -76,6 +86,8 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: "3.11"
+    - name: Install Poetry
+      uses: snok/install-poetry@v1.3.4
     - name: Recover cached deps
       id: cached-poetry-dependencies
       uses: actions/cache@v3
@@ -85,12 +97,11 @@ jobs:
     - name: Formatter
       run: |
         poetry run task formatter
-
-  # Security test job
   sectest:
+ 
     runs-on: ubuntu-latest
-    needs: build
     defaults:
+    needs: build
       run:
         working-directory: ./example-app
     steps:
@@ -99,6 +110,8 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: "3.11"
+    - name: Install Poetry
+      uses: snok/install-poetry@v1.3.4
     - name: Recover cached deps
       id: cached-poetry-dependencies
       uses: actions/cache@v3
@@ -108,11 +121,13 @@ jobs:
     - name: Sec test
       run: |
         poetry run task security
-
-  # Unit tests job
-  unit-tests:
+ 
+  Test:
+ 
     runs-on: ubuntu-latest
-    needs: build
+    needs: lint
+    needs: formatter
+    needs: sectest
     defaults:
       run:
         working-directory: ./example-app
@@ -122,15 +137,14 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: "3.11"
+    - name: Install Poetry
+      uses: snok/install-poetry@v1.3.4
     - name: Recover cached deps
       id: cached-poetry-dependencies
       uses: actions/cache@v3
       with:
         path: /home/runner/work/iac-labs/iac-labs/example-app/.venv
-        key: ${{ runner.os }}-venv
-    - name: Unit Tests
+        key: ${{ runner.os }}-venv     
+    - name: Test
       run: |
         poetry run task test
-    - name: Test with pytest
-      run: |
-        pytest
