@@ -46,15 +46,11 @@ jobs:
 
  
   lint:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     needs: build
     defaults:
       run:
         working-directory: ./example-app
-        shell: bash
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python 3.11
