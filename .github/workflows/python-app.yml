@@ -76,10 +76,10 @@ jobs:
   formatter:
  
     runs-on: ubuntu-latest
-    defaults:
     needs: build
+    defaults:
       run:
-        working-directory: ./example-app
+         working-directory: ./example-app
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python 3.11
